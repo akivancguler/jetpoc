@@ -1,0 +1,198 @@
+<!--
+ Copyright (c) 2014, 2020, Oracle and/or its affiliates.
+ The Universal Permissive License (UPL), Version 1.0
+ -->
+ <div class="oj-hybrid-padding">
+  <h1>Product Information AKG1</h1>
+  <div class="oj-flex oj-flex-init">
+    <div class="oj-flex-item oj-md-4 oj-sm-12">
+      <h3><oj-label for="activitiesList">Activities</oj-label></h3>
+      <oj-list-view id="activitiesList" style="width:100%;height:500px;overflow-x:hidden" data="[[activityDataProvider]]"
+                    selection-mode="single" selection="{{selectedActivity}}" on-selection-changed="[[selectedActivityChanged]]"
+                    first-selected-item="{{firstSelectedActivity}}" scroll-policy="loadMoreOnScroll"
+                    scroll-policy-options.fetch-size="5">
+        <template slot="itemTemplate">
+          <div class="oj-flex" style="flex-wrap: nowrap">
+            <span class="demo-thumbnail oj-flex-item" :style.background-image="[[' url('+$current.data.image+')']]"></span>
+            <div class="demo-content oj-flex-item">
+              <div>
+                <strong>
+                  <oj-bind-text value="[[$current.data.name]]"></oj-bind-text>
+                </strong>
+              </div>
+              <span class="demo-metadata">
+                <oj-bind-text value="[[$current.data.short_desc]]"></oj-bind-text>
+              </span>
+            </div>
+          </div>
+        </template>
+      </oj-list-view> 
+    </div>
+    <oj-bind-if test="[[activitySelected()]]">
+      <div class="oj-flex oj-flex-item oj-flex-items-pad oj-md-8 oj-sm-12">
+        <div class="oj-flex-item oj-md-6 oj-sm-12">
+          <h3><oj-label for="itemsList">Activity Items</oj-label></h3>
+          <oj-list-view id="itemsList" style="width:100%;height:500px;overflow-x:hidden" data="[[itemsDataProvider]]"
+                        selection-mode="single" selection="{{selectedItem}}" on-selection-changed="[[selectedItemChanged]]"
+                        first-selected-item="{{firstSelectedItem}}" scroll-policy="loadMoreOnScroll"
+                        scroll-policy-options.fetch-size="5">
+            <template slot="itemTemplate">
+              <div class="oj-flex" style="flex-wrap: nowrap">
+                <span class="demo-thumbnail oj-flex-item" :style.background-image="[[' url('+$current.data.image+')']]"></span>
+                <div class="demo-content oj-flex-item">
+                  <div>
+                    <strong>
+                      <oj-bind-text value="[[$current.data.name]]"></oj-bind-text>
+                    </strong>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </oj-list-view>
+        </div>
+        <oj-bind-if test="[[itemSelected()]]">
+          <div class="oj-flex-item oj-sm-12 oj-md-6">
+            <h3><oj-label for="basicSelect">Item Details</oj-label></h3>
+            <hr style="margin-top:12px;">
+            <oj-avatar role="img" size="lg" :aria-label="[['product image for '+ itemData().name]]" :src="[[itemData().image]]"
+                        style="float:right;">
+            </oj-avatar>
+            <div id="itemName" style="font-size: 20px; font-weight: bolder;">
+              <oj-bind-text value="[[itemData().name]]"></oj-bind-text>
+            </div>
+            <div id="itemDesc" style="font-size: 14px; font-weight: 400; font-style:italic; margin-bottom: 10px;">
+              <oj-bind-text value="[[itemData().short_desc]]"></oj-bind-text>
+            </div>
+            <div id="itemPrice">
+              <oj-bind-text value="[['Price: ' + itemData().price + ' each']]"></oj-bind-text>
+            </div>
+            <div id="itemId">
+              <oj-bind-text value="[['Item Id: ' + itemData().id]]"></oj-bind-text>
+            </div>
+            <div>
+              <oj-chart type="pie" series="[[pieSeriesValue]]" animation-on-display="auto"
+                        animation-on-data-change="auto" hover-behavior="dim"
+                        legend.position="bottom"
+                        style="max-width: 400px;width:100%;height:350px;">
+              </oj-chart>
+            </div>
+          </div>
+        </oj-bind-if>
+        <oj-bind-if test="[[!itemSelected()]]">
+          <div class="oj-flex-item  oj-sm-12 oj-md-6">
+            <h4>Select an Item to see details</h4>
+          </div>
+        </oj-bind-if>
+      </div>
+    </oj-bind-if>
+    <oj-bind-if test="[[!activitySelected()]]">
+      <div class="oj-flex-item oj-sm-6">
+        <h4>Select an Activity to see Items</h4>
+      </div>
+    </oj-bind-if>
+
+    <div>
+      <oj-label for="basicSelect">Select Chart:</oj-label>
+      <oj-select-single id="basicSelect"
+                        style="max-width:20em"
+                        data="[[chartTypes]]"
+                        value="{{val}}">
+      </oj-select-single>
+
+      <oj-chart id="barChart"
+      type="[[val]]" 
+      data="[[chartDataProvider]]"
+      animation-on-display="auto"
+      animation-on-data-change="auto"
+      hover-behavior="dim"
+      style="max-width:500px;width:100%;height:350px;">
+      <template slot='itemTemplate' data-oj-as='item'>
+        <oj-chart-item value='[[item.data.value]]'
+        group-id='[[ [item.data.group] ]]'
+        series-id='[[item.data.series]]'>
+</oj-chart-item>
+      </template>
+</oj-chart>
+
+   </div>
+
+
+
+
+   <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+                  
+    <oj-table id='table' title="patates_title" aria-label='Departments Table'
+                                    data='[[dataprovider]]'
+                                    selection-mode='{"row": "multiple", "column": "multiple"}'
+                                    dnd='{"reorder": {"columns": "enabled"}}'
+                                    scroll-policy='loadMoreOnScroll'
+                                    scroll-policy-options='{"fetchSize": 10}'
+                                    columns='[{"headerText": "Department Id", 
+                                               "field": "DepartmentId",
+                                               "headerClassName": "oj-sm-only-hide",
+                                               "className": "oj-sm-only-hide",
+                                               "resizable": "enabled"},
+                                              {"headerText": "Department Name", 
+                                               "field": "DepartmentName",
+                                               "resizable": "enabled"},
+                                              {"headerText": "Location Id", 
+                                               "field": "LocationId",
+                                               "headerClassName": "oj-sm-only-hide",
+                                               "className": "oj-sm-only-hide",
+                                               "resizable": "enabled"},
+                                              {"headerText": "Manager Id", 
+                                               "field": "ManagerId",
+                                               "resizable": "enabled"}]'
+                                    style='width: 100%; height: 200px;'>
+    </oj-table>
+    
+    
+    
+    
+    
+  </div>
+
+  
+
+
+      <!-- Page -->
+      <div id="inlineMessages">
+            
+        <!-- Messages -->
+        <oj-messages messages="[[messagesDataprovider]]">
+        </oj-messages>
+        
+      </div>
+
+<!--      <div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+
+    <oj-data-grid 
+    id="datagrid" 
+    style="height:200px; max-width:477px" 
+    data="[[dataSource]]" 
+    selection-mode.row="single" 
+    dnd.reorder.row="enable" 
+    header.column.style="width:100px" > 
+</oj-data-grid>
+
+  </div>
+-->
+
+
+<div id="componentDemoContent" style="width: 1px; min-width: 100%;">
+                  
+  <oj-data-grid id="datagrid" 
+      style="width:100%;height:400px;max-width:777px;" 
+      aria-label="Data Grid Formatted Row Based Grid Demo"
+      data="[[dataSource]]" 
+      selection-mode.row="multiple"
+      banding-interval.row="1"
+      dnd.reorder.row="enable"
+      header.column.style="width:125px"
+      header.column.resizable.width="enable"
+      header.column.resizable.height="enable"
+  ></oj-data-grid>
+</div>
+
+  </div>
+</div>
